@@ -26,6 +26,7 @@ import {environment} from '../environments/environment';
     })
   ],
   providers: [provideBrowserGlobalErrorListeners()],
+  exports: [],
   bootstrap: [App]
 })
 export class AppModule {

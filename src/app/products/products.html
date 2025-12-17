@@ -2,7 +2,7 @@
   <a class="btn btn-outline-light position-relative" left routerLink="/cart">
     Cart
     <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
-      {{ cartCount }}
+      {{ cartCount() }}
     </span>
   </a>
 
@@ -13,14 +13,14 @@
   }
 </app-header>
 
-<main class="container-fluid py-2">
+<main class="container py-2">
   <section class="row g-2">
-    @if (!productsService.products().length) {
+    @if (!products().length) {
       <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="spinner-border text-light" role="status"></div>
       </div>
     } @else {
-      @for (product of productsService.products(); track product.id) {
+      @for (product of products(); track product.id) {
         <section class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
           <section class="card product-card bg-dark text-white border-secondary h-100">
             <img
@@ -35,11 +35,22 @@
                 {{ product.description }}
               </p>
 
+              <p class="card-text small product-description d-flex justify-content-between">
+                <span class="badge text-bg-primary" style="font-size: 13px">{{ product.price | currency }}</span>
+                <span class="badge text-bg-secondary" style="font-size: 13px">⭐ {{ product.rating }}</span>
+              </p>
+
               <a
                 [routerLink]="['/products', product.id]"
-                class="btn btn-outline-light mt-auto w-100">
+                class="btn btn-outline-primary mt-auto w-100">
                 View Details
               </a>
+
+              <button
+                (click)="addToCart(product)"
+                class="btn btn-primary mt-3 w-100">
+                Buy now
+              </button>
             </section>
           </section>
         </section>
@@ -48,3 +59,5 @@
     <div #loadMoreTrigger></div>
   </section>
 </main>
+
+<app-toast content="Successfully Added To Cart"/>

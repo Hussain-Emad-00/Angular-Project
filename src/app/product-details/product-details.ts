@@ -2,6 +2,7 @@ import {Component, inject, input, OnDestroy, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 
 import {ProductDetailsService} from './product-details.service';
+import {ToastService} from '../services/toast.service';
 
 @Component({
   selector: 'app-product-details',
@@ -13,6 +14,7 @@ export class ProductDetails implements OnInit, OnDestroy {
   id = input.required<string>()
   location = inject(Location)
   productService = inject(ProductDetailsService)
+  toastService = inject(ToastService)
   product = this.productService.product
   quantity = this.productService.quantity
 
@@ -31,5 +33,6 @@ export class ProductDetails implements OnInit, OnDestroy {
 
   addToCart() {
     this.productService.addToCart()
+    this.toastService.show()
   }
 }

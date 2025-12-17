@@ -3,7 +3,11 @@
     <app-sidebar [isOpen]="isOpen()" class="col-auto pe-0"/>
 
     <div class="col px-0 page-wrapper">
-      <app-header (toggleSidebar)="onToggleSidebar()"></app-header>
+      <app-header (toggleSidebar)="onToggleSidebar()">
+        <a class="btn btn-outline-light position-relative ms-3" right routerLink="/products">
+          Products
+        </a>
+      </app-header>
       <router-outlet/>
     </div>
   </div>

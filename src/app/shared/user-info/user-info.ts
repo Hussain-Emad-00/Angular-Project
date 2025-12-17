@@ -7,7 +7,6 @@ type User = { name: string | undefined, photoUrl: string | undefined }
 @Component({
   selector: 'app-user-info',
   templateUrl: './user-info.html',
-  styleUrl: './user-info.scss',
 })
 export class UserInfoComponent implements OnInit {
   user = signal<User>({name: '', photoUrl: ''});

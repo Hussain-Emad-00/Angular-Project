@@ -31,7 +31,7 @@ export class ProductDetailsService {
   }
 
   addToCart() {
-    const newProduct = {
+    const product = {
       id: this.product()?.id,
       thumbnail: this.product()?.thumbnail,
       title: this.product()?.title,
@@ -40,6 +40,6 @@ export class ProductDetailsService {
       stock: this.product()?.stock,
     }
 
-    this.cartService.addToCart(newProduct);
+    this.cartService.addToCart(product);
   }
 }
