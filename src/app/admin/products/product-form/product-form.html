@@ -1,0 +1,89 @@
+<div aria-hidden="true" aria-labelledby="addNewProductModalLabel" class="modal fade" data-bs-theme="dark"
+     id="addNewProductModal"
+     tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="addNewProductModalLabel">
+          {{ selectedProduct() ? "Edit Product" : "Add New Product" }}
+        </h5>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitNewProduct()" (reset)="imagePreview.set(null)" [formGroup]="newProductForm">
+          <div class="mb-3">
+            <label class="form-label" for="firstName">Product Title</label>
+            <input
+              [class.error]="invalidInputs().includes('title')"
+              class="form-control"
+              formControlName="title"
+              type="text"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="lastName">Product Description</label>
+            <input
+              [class.error]="invalidInputs().includes('description')"
+              class="form-control"
+              formControlName="description"
+              type="text"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="age">Price</label>
+            <input
+              [class.error]="invalidInputs().includes('price')"
+              class="form-control"
+              formControlName="price"
+              type="number"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input
+              [class.error]="invalidInputs().includes('stock')"
+              class="form-control"
+              formControlName="stock"
+              type="number"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Image</label>
+            <input
+              (change)="onFileSelected($event)"
+              [class.error]="invalidInputs().includes('image')"
+              accept="image/*"
+              class="form-control"
+              type="file"
+            />
+
+            @if (imagePreview()) {
+              <div class="mt-2 text-center">
+                <img
+                  [src]="imagePreview()"
+                  alt="Product Image Preview"
+                  class="img-thumbnail"
+                  style="max-width: 200px; max-height: 200px;"
+                />
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal" type="reset">
+              Cancel
+            </button>
+            <button class="btn btn-success" type="submit">
+              {{ selectedProduct() ? "Update Product" : "Add Product" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

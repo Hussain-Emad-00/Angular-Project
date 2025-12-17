@@ -1,0 +1,10 @@
+<div class="container-fluid p-0">
+  <div class="row w-100 overflow-hidden">
+    <app-sidebar [isOpen]="isOpen()" class="col-auto pe-0"/>
+
+    <div class="col px-0 page-wrapper">
+      <app-header (toggleSidebar)="onToggleSidebar()"></app-header>
+      <router-outlet/>
+    </div>
+  </div>
+</div>

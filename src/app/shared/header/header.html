@@ -1,0 +1,22 @@
+<header class="d-flex p-3 bg-dark text-white">
+  <section>
+    <img alt="Logo" class="me-5" height="40" src="/favicon.ico" width="40">
+    <ng-content select="[right]"></ng-content>
+  </section>
+
+  <section class="ms-auto d-flex align-items-center">
+    <ng-content select="[left]"></ng-content>
+
+    <section class="d-none d-md-block">
+      <app-user-info/>
+    </section>
+
+    <button
+      (click)="onToggleSidebar()"
+      class="btn btn-outline-light d-md-none py-3 ms-3 header-toggler-button"
+      type="button">
+      <span class="header-toggler-icon"></span>
+    </button>
+  </section>
+
+</header>

@@ -1,0 +1,25 @@
+.main-img {
+  height: 350px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.thumb-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+
+.thumb-img:hover {
+  transform: scale(1.05);
+}
+
+.page-input {
+  width: 70px;
+  background: #1e1e1e;
+  color: #fff;
+  border: 1px solid #555;
+  text-align: center;
+}
