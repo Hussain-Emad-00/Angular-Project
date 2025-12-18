@@ -26,11 +26,12 @@ export class CartService {
     if (product.quantity >= product.stock) product.quantity = product.stock;
 
     if (exist) {
-      if (exist.quantity >= product.stock) return;
+      if (exist.quantity >= product.stock) return false;
       exist.quantity += product.quantity;
     } else this.cart.update((products) => [...products, product]);
 
     this.saveCart();
+    return true;
   }
 
   removeFromCart(id: number) {

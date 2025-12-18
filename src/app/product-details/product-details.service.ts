@@ -40,6 +40,6 @@ export class ProductDetailsService {
       stock: this.product()?.stock,
     }
 
-    this.cartService.addToCart(product);
+    return this.cartService.addToCart(product);
   }
 }

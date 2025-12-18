@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, inject, OnInit, signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
 import {CartService} from '../cart/cart.service';
 import {ProductsService} from './products.service';
 import {ToastService} from '../services/toast.service';
@@ -9,7 +9,7 @@ import {ToastService} from '../services/toast.service';
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
-export class Products implements OnInit, AfterViewInit {
+export class Products implements OnInit, AfterViewInit, OnDestroy {
   cartService = inject(CartService);
   productsService = inject(ProductsService);
   toastService = inject(ToastService);
@@ -33,7 +33,7 @@ export class Products implements OnInit, AfterViewInit {
   }
 
   addToCart(product: any) {
-    this.cartService.addToCart({
+    const added = this.cartService.addToCart({
       id: product.id,
       thumbnail: product.thumbnail,
       title: product.title,
@@ -41,7 +41,14 @@ export class Products implements OnInit, AfterViewInit {
       quantity: 1,
       stock: product.stock,
     });
-    this.cartCount.set(this.cartService.getCount())
-    this.toastService.show()
+    if (added) {
+      this.cartCount.set(this.cartService.getCount())
+      this.toastService.show("success", "Successfully Added To Cart")
+    } else
+      this.toastService.show("danger", "No Stock")
+  }
+
+  ngOnDestroy() {
+    this.productsService.reset()
   }
 }

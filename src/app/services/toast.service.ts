@@ -6,10 +6,20 @@ declare var bootstrap: any;
   providedIn: 'root',
 })
 export class ToastService {
-  show() {
+  show(classBgColor: string, content: string) {
     const toastLiveElement = document.getElementById('liveToast')
-    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveElement)
+    const toastBody = document.getElementById('toast-body')
+    toastBody!.textContent = content;
 
+    if (classBgColor.includes('danger')) {
+      toastLiveElement?.classList.remove('text-bg-success');
+      toastLiveElement?.classList.add('text-bg-danger');
+    } else if (classBgColor.includes('success')) {
+      toastLiveElement?.classList.remove('text-bg-danger');
+      toastLiveElement?.classList.add('text-bg-success');
+    }
+
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveElement)
     toastBootstrap.show()
   }
 }

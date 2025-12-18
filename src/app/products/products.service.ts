@@ -50,4 +50,9 @@ export class ProductsService {
   isAdmin() {
     return this.authService.isAdmin$()
   }
+
+  reset() {
+    this.products.set([])
+    this.skipped.set(0)
+  }
 }
