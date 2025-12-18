@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, signal, viewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild
+} from '@angular/core';
 import {CartService} from '../cart/cart.service';
 import {ProductsService} from './products.service';
 import {ToastService} from '../services/toast.service';
@@ -9,7 +19,7 @@ import {ToastService} from '../services/toast.service';
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
-export class Products implements OnInit, AfterViewInit, OnDestroy {
+export class Products implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   cartService = inject(CartService);
   productsService = inject(ProductsService);
   toastService = inject(ToastService);
@@ -32,6 +42,10 @@ export class Products implements OnInit, AfterViewInit, OnDestroy {
     observer.observe(this.trigger()?.nativeElement);
   }
 
+  ngAfterViewChecked() {
+    this.cartCount.set(this.cartService.count());
+  }
+
   addToCart(product: any) {
     const item = {
       id: product.id,
@@ -42,8 +56,7 @@ export class Products implements OnInit, AfterViewInit, OnDestroy {
       stock: product.stock,
     }
 
-
-    const added = this.cartService.addToCart(item).then(added => {
+    this.cartService.addToCart(item).then(added => {
       if (added) {
         this.cartCount.set(this.cartService.count());
         this.toastService.show("success", "Successfully Added To Cart")
