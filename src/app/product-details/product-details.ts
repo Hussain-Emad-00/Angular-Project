@@ -32,10 +32,11 @@ export class ProductDetails implements OnInit, OnDestroy {
   }
 
   addToCart() {
-    const added = this.productService.addToCart()
-    if (added)
-      this.toastService.show("success", "Successfully Added To Cart")
-    else
-      this.toastService.show("danger", "No Stock")
+    this.productService.addToCart().then(added => {
+      if (added)
+        this.toastService.show("success", "Successfully Added To Cart")
+      else
+        this.toastService.show("danger", "No Stock")
+    })
   }
 }

@@ -15,7 +15,7 @@ export class Products implements OnInit, AfterViewInit, OnDestroy {
   toastService = inject(ToastService);
   trigger = viewChild<ElementRef>('loadMoreTrigger')
   isAdmin = signal(false)
-  cartCount = signal(this.cartService.getCount())
+  cartCount = signal(this.cartService.count())
   products = this.productsService.products;
 
   ngOnInit() {
@@ -33,19 +33,23 @@ export class Products implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addToCart(product: any) {
-    const added = this.cartService.addToCart({
+    const item = {
       id: product.id,
       thumbnail: product.thumbnail,
       title: product.title,
       price: product.price,
       quantity: 1,
       stock: product.stock,
-    });
-    if (added) {
-      this.cartCount.set(this.cartService.getCount())
-      this.toastService.show("success", "Successfully Added To Cart")
-    } else
-      this.toastService.show("danger", "No Stock")
+    }
+
+
+    const added = this.cartService.addToCart(item).then(added => {
+      if (added) {
+        this.cartCount.set(this.cartService.count());
+        this.toastService.show("success", "Successfully Added To Cart")
+      } else
+        this.toastService.show("danger", "No Stock")
+    })
   }
 
   ngOnDestroy() {

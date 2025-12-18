@@ -1,65 +1,56 @@
-import {Injectable, signal} from '@angular/core';
+import {computed, Injectable} from '@angular/core';
 
+import {db} from './db';
 import {CartItem} from './cart.model';
+import {liveQuery} from 'dexie';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  cart = signal<CartItem[]>([])
+  cart$ = liveQuery(() => db.cartItems.toArray())
+  cart = toSignal<CartItem[]>(this.cart$);
+  total = computed(() => {
+    const items = this.cart()
+    if (!items) return 0;
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      .toFixed(2)
+  });
+  count = computed(() => {
+    const items = this.cart();
+    if (!items) return 0;
+    return items.reduce((sum, item) => sum + item.quantity, 0);
+  });
 
-  constructor() {
-    this.loadCart()
-  }
-
-  saveCart() {
-    localStorage.setItem('cart-products', JSON.stringify(this.cart()));
-  }
-
-  loadCart() {
-    const savedProducts = localStorage.getItem('cart-products');
-    this.cart.set(savedProducts ? JSON.parse(savedProducts) : [])
-  }
-
-  addToCart(product: any) {
-    const exist = this.cart().find((p) => p.id === product.id);
+  async addToCart(product: any) {
+    const existItem = await db.cartItems.where({id: product.id}).first();
     if (product.quantity >= product.stock) product.quantity = product.stock;
 
-    if (exist) {
-      if (exist.quantity >= product.stock) return false;
-      exist.quantity += product.quantity;
-    } else this.cart.update((products) => [...products, product]);
+    if (existItem) {
+      if (existItem.quantity >= product.stock) return false;
+      existItem.quantity += product.quantity;
+      await db.cartItems.put(existItem)
+    } else await db.cartItems.add(product);
 
-    this.saveCart();
     return true;
   }
 
-  removeFromCart(id: number) {
-    this.cart.update((products) => products.filter((x: any) => x.id !== id))
-    this.saveCart();
+  async removeFromCart(id: number) {
+    await db.cartItems.where({id}).delete();
   }
 
-  updateQuantity(id: number, quantity: number) {
-    const item = this.cart().find((x: any) => x.id === id);
+  async updateQuantity(id: number, quantity: number) {
+    const item = await db.cartItems.where({id}).first();
     if (!item) return;
+
     if (quantity >= item.stock) quantity = item.stock;
-
     item.quantity = quantity;
-    this.saveCart();
+
+    await db.cartItems.put(item)
   }
 
-  clearCart() {
-    this.cart.set([]);
-    this.saveCart()
-  }
-
-  getTotal() {
-    return this.cart()
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
-      .toFixed(2);
-  }
-
-  getCount() {
-    return this.cart().reduce((sum, item) => sum + item.quantity, 0);
+  async clearCart() {
+    await db.cartItems.clear()
   }
 }

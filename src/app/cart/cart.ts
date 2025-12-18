@@ -11,6 +11,7 @@ import {CartService} from './cart.service';
 export class Cart {
   cartService = inject(CartService);
   cart = this.cartService.cart;
+  total = this.cartService.total;
 
   clearCart() {
     this.cartService.clearCart();
@@ -18,10 +19,6 @@ export class Cart {
 
   updateItemQuantity(id: number, quantity: number) {
     this.cartService.updateQuantity(id, quantity);
-  }
-
-  getTotalPrice() {
-    return this.cartService.getTotal()
   }
 
   removeItemFromCart(id: number) {

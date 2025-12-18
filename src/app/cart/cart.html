@@ -7,17 +7,17 @@
 <section class="container py-4">
   <header class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="h4 text-white">Shopping Cart</h2>
-    @if (cart().length > 0) {
+    @if (cart()!.length > 0) {
       <button (click)="clearCart()" class="btn btn-danger">
         Clear Cart
       </button>
     }
   </header>
-  @if (cart().length === 0) {
+  @if (cart()!.length === 0) {
     <div class="text-center text-secondary">
       <h5>Your cart is empty</h5>
     </div>
-  } @else if (cart().length > 0) {
+  } @else if (cart()!.length > 0) {
     <div class="table-responsive">
       <table class="table table-dark table-striped align-middle text-center">
         <thead>
@@ -72,7 +72,7 @@
     <div class="text-end mt-3">
       <h4>
         Grand Total:
-        <span class="text-success">{{ getTotalPrice() | currency }}</span>
+        <span class="text-success">{{ total() | currency }}</span>
       </h4>
 
       <button class="btn btn-primary mt-2">

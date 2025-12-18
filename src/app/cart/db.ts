@@ -6,8 +6,8 @@ export class AppDB extends Dexie {
   cartItems!: Table<CartItem, number>;
 
   constructor() {
-    super('ngdexieliveQuery');
-    this.version(3).stores({todoItems: '++id'});
+    super('CartDB');
+    this.version(3).stores({cartItems: '++id'});
   }
 }
 
