@@ -22,10 +22,11 @@ export class CartService {
   }
 
   addToCart(product: any) {
+    const exist = this.cart().find((p) => p.id === product.id);
     if (product.quantity >= product.stock) product.quantity = product.stock;
 
-    const exist = this.cart().find((p) => p.id === product.id);
     if (exist) {
+      if (exist.quantity >= product.stock) return;
       exist.quantity += product.quantity;
     } else this.cart.update((products) => [...products, product]);
 

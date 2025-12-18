@@ -1,10 +1,10 @@
 <div class="container-fluid p-0">
-  <div class="row w-100 overflow-hidden">
+  <div class="row overflow-hidden">
     <app-sidebar [isOpen]="isOpen()" class="col-auto pe-0"/>
 
     <div class="col px-0 page-wrapper">
       <app-header (toggleSidebar)="onToggleSidebar()">
-        <a class="btn btn-outline-light position-relative ms-3" right routerLink="/products">
+        <a class="btn btn-outline-light position-relative ms-3" left routerLink="/products">
           Products
         </a>
       </app-header>

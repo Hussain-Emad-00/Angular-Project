@@ -1,5 +1,6 @@
-import {Component, output} from '@angular/core';
+import {Component, inject, output} from '@angular/core';
 import {UserInfoComponent} from '../user-info/user-info';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -9,6 +10,11 @@ import {UserInfoComponent} from '../user-info/user-info';
 })
 export class HeaderComponent {
   toggleSidebar = output()
+  router = inject(Router);
+
+  showToggleSidebarBtn() {
+    return !this.router.url.includes('admin')
+  }
 
   onToggleSidebar() {
     this.toggleSidebar.emit()

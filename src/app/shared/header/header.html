@@ -13,6 +13,7 @@
 
     <button
       (click)="onToggleSidebar()"
+      [class.d-none]="showToggleSidebarBtn()"
       class="btn btn-outline-light d-md-none py-3 ms-3 header-toggler-button"
       type="button">
       <span class="header-toggler-icon"></span>
