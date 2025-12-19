@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {AuthService as Auth0Service} from '@auth0/auth0-angular';
-import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+
+import {db} from '../cart/db';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class AuthService {
 
   logout() {
     this.auth0.logout({logoutParams: {returnTo: window.location.origin}});
+    this.clearIndexedDb().then()
   }
 
   getUser$() {
@@ -37,9 +39,13 @@ export class AuthService {
     );
   }
 
-  isAdmin$(): Observable<boolean> {
+  isAdmin$() {
     return this.getUserRole$().pipe(
       map(role => role === 'Admin')
     );
+  }
+
+  async clearIndexedDb() {
+    await db.cartItems.clear()
   }
 }
