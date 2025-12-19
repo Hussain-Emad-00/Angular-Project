@@ -7,13 +7,13 @@
   <section class="ms-auto d-flex align-items-center">
     <ng-content select="[left]"></ng-content>
 
-    <section class="d-none d-md-block">
+    <section [class.d-none]="!isPathIncludesAdmin()" class="d-md-block">
       <app-user-info/>
     </section>
 
     <button
       (click)="onToggleSidebar()"
-      [class.d-none]="showToggleSidebarBtn()"
+      [class.d-none]="isPathIncludesAdmin()"
       class="btn btn-outline-light d-md-none py-3 ms-3 header-toggler-button"
       type="button">
       <span class="header-toggler-icon"></span>

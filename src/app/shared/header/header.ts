@@ -12,7 +12,7 @@ export class HeaderComponent {
   toggleSidebar = output()
   router = inject(Router);
 
-  showToggleSidebarBtn() {
+  isPathIncludesAdmin() {
     return !this.router.url.includes('admin')
   }
 

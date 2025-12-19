@@ -39,4 +39,12 @@ export class ProductDetails implements OnInit, OnDestroy {
         this.toastService.show("danger", "No Stock")
     })
   }
+
+  incrementQuantity() {
+    this.quantity.update((q) => q >= this.product()!.stock ? q : q + 1)
+  }
+
+  decrementQuantity() {
+    this.quantity.update((q) => q <= 1 ? q : q - 1)
+  }
 }

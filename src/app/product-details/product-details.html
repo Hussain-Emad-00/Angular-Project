@@ -47,13 +47,15 @@
 
         <section class="d-flex align-items-center">
           <span class="me-2">Quantity: </span>
+          <button (click)="decrementQuantity()" class="btn btn-primary w-100 fs-5">-</button>
           <input
             [(ngModel)]="quantity"
             [max]="product()!.stock"
-            class="form-control page-input"
+            class="form-control page-input mx-2 w-100 fs-5"
             min="1"
             type="number"
           />
+          <button (click)="incrementQuantity()" class="btn btn-primary w-100 fs-5">+</button>
         </section>
 
         <button (click)="addToCart()" class="btn btn-primary w-100 mt-3">
