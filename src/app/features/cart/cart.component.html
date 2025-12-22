@@ -1,0 +1,73 @@
+<section class="container py-4">
+  <header class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 text-white">Shopping Cart</h2>
+    @if (cart()!.length > 0) {
+      <button (click)="clearCart()" class="btn btn-danger">Clear Cart</button>
+    }
+  </header>
+  @if (cart()!.length === 0) {
+    <div class="text-center text-secondary">
+      <h5>Your cart is empty</h5>
+    </div>
+  } @else if (cart()!.length > 0) {
+    <div class="table-responsive">
+      <table class="table table-dark table-striped align-middle text-center">
+        <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th width="80">Quantity</th>
+          <th>Total</th>
+          <th>Delete</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (item of cart(); track item.id) {
+            <tr>
+              <td>
+                <img [alt]="item.title" [src]="item.thumbnail" class="rounded" height="60" width="60"/>
+              </td>
+
+              <td>{{ item.title }}</td>
+
+              <td>{{ item.price | currency }}</td>
+
+              <td>{{ item.stock }}</td>
+
+              <td>
+                <input
+                  #quantityInput
+                  (change)="updateItemQuantity(item.id, +quantityInput.value)"
+                  [max]="item.stock"
+                  [value]="item.quantity"
+                  class="form-control bg-dark text-white text-center"
+                  min="1"
+                  type="number"
+                />
+              </td>
+
+              <td>
+                {{ item.price * item.quantity | currency }}
+              </td>
+
+              <td>
+                <button (click)="removeItemFromCart(item.id)" class="btn btn-sm btn-danger">X</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="text-end mt-3">
+      <h4>
+        Grand Total:
+        <span class="text-success">{{ total() | currency }}</span>
+      </h4>
+
+      <button class="btn btn-primary mt-2">Checkout</button>
+    </div>
+  }
+</section>

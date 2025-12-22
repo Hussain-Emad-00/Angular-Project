@@ -1,0 +1,38 @@
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  font-family: "Arial", sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+
+  h1 {
+    font-size: 10rem;
+    margin: 0;
+    font-weight: bold;
+    color: #222;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin: 20px 0;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}

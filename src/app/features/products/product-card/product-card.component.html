@@ -1,0 +1,42 @@
+<main class="container-lg py-2">
+  <section class="row g-2">
+    @if (!products().length) {
+      <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="spinner-border text-light" role="status"></div>
+      </div>
+    } @else {
+      @for (product of products(); track product.id) {
+        <section class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+          <section class="card product-card bg-dark text-white border-secondary h-100">
+            <img [alt]="product.title" [src]="product.thumbnail" class="card-img-top product-img"/>
+
+            <section class="card-body d-flex flex-column">
+              <h5 class="card-title mb-2 text-truncate">{{ product.title }}</h5>
+
+              <p class="card-text small product-description">
+                {{ product.description }}
+              </p>
+
+              <p class="card-text small product-description d-flex justify-content-between">
+            <span class="badge text-bg-primary" style="font-size: 13px">{{
+                product.price | currency
+              }}</span>
+                <span class="badge text-bg-secondary" style="font-size: 13px"
+                >⭐ {{ product.rating }}</span>
+              </p>
+
+              <a [routerLink]="['/products', product.id]" class="btn btn-outline-primary mt-auto w-100">
+                View Details
+              </a>
+
+              <button (click)="addToCart(product)" class="btn btn-primary mt-3 w-100">Buy now</button>
+            </section>
+          </section>
+        </section>
+      }
+    }
+    <div #loadMoreTrigger></div>
+  </section>
+</main>
+
+<app-toast/>
