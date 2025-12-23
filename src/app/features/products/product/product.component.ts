@@ -2,8 +2,8 @@ import {Component, inject, input, OnDestroy, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 
 import {ProductService} from './product.service';
-import {ToastService} from '../../../core/services/toast.service';
 import {Router} from '@angular/router';
+import {ToastService} from '../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-product',
@@ -15,8 +15,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   id = input.required<string>();
   location = inject(Location);
   router = inject(Router);
-  productService = inject(ProductService);
   toastService = inject(ToastService);
+  productService = inject(ProductService);
   product = this.productService.product;
   quantity = this.productService.quantity;
 
@@ -35,8 +35,8 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   addToCart() {
     this.productService.addToCart().then((added) => {
-      if (added) this.toastService.show('success', 'Successfully Added To Cart');
-      else this.toastService.show('danger', 'No Stock');
+      if (added) this.toastService.add('Successfully Added To Cart', 'text-bg-success')
+      else this.toastService.add('No Stock', 'text-bg-danger')
     });
   }
 

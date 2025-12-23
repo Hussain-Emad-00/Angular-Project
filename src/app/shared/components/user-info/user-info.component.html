@@ -1,11 +1,8 @@
-<section class="ms-3">
-  <a
-    aria-expanded="false"
-    class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-    data-bs-toggle="dropdown"
-    href="#"
-    role="button"
-  >
+<section class="ms-3" ngbDropdown>
+  <button
+    class="btn btn-dark"
+    id="infoDropdown"
+    ngbDropdownToggle>
     <img
       [alt]="user().name"
       [src]="user().photoUrl"
@@ -14,10 +11,8 @@
       width="40"
     />
     <span>{{ user().name }}</span>
-  </a>
-  <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-    <li>
-      <button (click)="logout()" class="dropdown-item">Logout</button>
-    </li>
-  </ul>
+  </button>
+  <div aria-labelledby="infoDropdown" class="dropdown-menu-dark dropdown-menu-end" ngbDropdownMenu>
+    <button (click)="logout()" class="dropdown-item" ngbDropdownItem>Logout</button>
+  </div>
 </section>

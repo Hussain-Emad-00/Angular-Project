@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {CartService} from '../../../core/services/cart.service';
 import {ProductsService} from '../products.service';
-import {ToastService} from '../../../core/services/toast.service';
+import {ToastService} from '../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-product-card',
@@ -58,8 +58,8 @@ export class ProductCardComponent implements OnInit, AfterViewInit, AfterViewChe
     this.cartService.addToCart(item).then((added) => {
       if (added) {
         this.cartCount.set(this.cartService.count());
-        this.toastService.show('success', 'Successfully Added To Cart');
-      } else this.toastService.show('danger', 'No Stock');
+        this.toastService.add('Successfully Added To Cart', 'text-bg-success')
+      } else this.toastService.add('No Stock', 'text-bg-danger')
     });
   }
 

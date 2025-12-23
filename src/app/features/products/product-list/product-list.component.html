@@ -40,23 +40,17 @@
                 <td>{{ product.stock }}</td>
 
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                  <div ngbDropdown>
+                    <button class="btn btn-sm btn-outline-primary" id="actionDropdown" ngbDropdownToggle>
                       Actions
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                      <li>
-                        <a [routerLink]="[product.id]" class="dropdown-item">View Details</a>
-                      </li>
-                      <li>
-                        <button (click)="openProductModal(product.id)" class="dropdown-item">Edit</button>
-                      </li>
-                      <li>
-                        <button (click)="deleteProduct(product.id)" class="dropdown-item text-danger">
-                          Delete
-                        </button>
-                      </li>
-                    </ul>
+                    <div aria-labelledby="actionDropdown" class="dropdown-menu-dark" ngbDropdownMenu>
+                      <a [routerLink]="[product.id]" class="dropdown-item" ngbDropdownItem>View Details</a>
+                      <button (click)="openProductModal(product.id)" class="dropdown-item" ngbDropdownItem>Edit</button>
+                      <button (click)="deleteProduct(product.id)" class="dropdown-item text-danger" ngbDropdownItem>
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </td>
 
