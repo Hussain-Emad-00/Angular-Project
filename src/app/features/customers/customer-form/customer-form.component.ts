@@ -1,6 +1,6 @@
-import {Component, input, OnChanges, output, signal, SimpleChanges} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators,} from '@angular/forms';
-import {Customer} from '../../../shared/models/customer.model';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-customer-form',
@@ -8,51 +8,31 @@ import {Customer} from '../../../shared/models/customer.model';
   styleUrl: './customer-form.component.scss',
   standalone: false,
 })
-export class CustomerFormComponent implements OnChanges {
-  newCustomerForm = new FormGroup({
+export class CustomerFormComponent implements OnInit {
+  @Input() customer: any
+  ngbActiveModal = inject(NgbActiveModal);
+  customerForm = new FormGroup({
     firstName: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
-    age: new FormControl(12, [Validators.required, Validators.min(12)]),
+    age: new FormControl(1, [Validators.required, Validators.min(1)]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    phone: new FormControl('', [Validators.required]),
+    phone: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^01[0125]\d{8}$/),
+      Validators.minLength(11),
+      Validators.maxLength(11)
+    ]),
   });
-  invalidInputs = signal<string[]>([]);
-  selectedCustomer = input<Customer>();
-  submitCustomer = output<any>();
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!this.selectedCustomer()) {
-      this.newCustomerForm.reset();
-      return;
-    }
-    if (changes['selectedCustomer'] && this.selectedCustomer()) {
-      this.newCustomerForm.patchValue({
-        firstName: this.selectedCustomer()?.firstName,
-        lastName: this.selectedCustomer()?.lastName,
-        age: this.selectedCustomer()?.age,
-        email: this.selectedCustomer()?.email,
-        phone: this.selectedCustomer()?.phone,
-      });
-    }
+  ngOnInit() {
+    if (this.customer) this.customerForm.patchValue(this.customer)
   }
 
-  onSubmitNewCustomer() {
-    if (this.newCustomerForm.valid) {
-      this.submitCustomer.emit({
-        ...this.newCustomerForm.value,
-        action: this.selectedCustomer() ? 'update' : 'add',
-        id: this.selectedCustomer()?.id,
-      });
-      this.newCustomerForm.reset();
-    } else {
-      this.invalidInputs.set([]);
-      let controls = this.newCustomerForm.controls;
-      for (const key in controls) {
-        const control = controls[key as keyof typeof controls];
-        if (control.invalid) {
-          this.invalidInputs.update((old) => [...old, key]);
-        }
-      }
-    }
+  save() {
+    if (this.customerForm.valid) this.ngbActiveModal.close(
+      this.customer
+        ? {...this.customerForm.value, action: 'update', id: this.customer.id}
+        : {...this.customerForm.value, action: 'add'})
+    else this.customerForm.markAllAsDirty()
   }
 }

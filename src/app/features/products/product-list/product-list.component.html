@@ -2,12 +2,11 @@
   <header class="d-flex justify-content-between p-2 align-items-center">
     <h2 class="h4">Products</h2>
     <button
-      (click)="addNewProduct()"
+      (click)="openProductModal()"
       class="btn btn-primary">
       Add New Product
     </button>
   </header>
-  <app-product-form (submitProduct)="onProductSubmitted($event)" [selectedProduct]="selectedProduct()!"/>
   @if (loading()) {
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-border text-light" role="status"></div>
@@ -47,10 +46,10 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
                       <li>
-                        <a [routerLink]="[ product.id]" class="dropdown-item">View Details</a>
+                        <a [routerLink]="[product.id]" class="dropdown-item">View Details</a>
                       </li>
                       <li>
-                        <button (click)="editProduct(product.id)" class="dropdown-item">Edit</button>
+                        <button (click)="openProductModal(product.id)" class="dropdown-item">Edit</button>
                       </li>
                       <li>
                         <button (click)="deleteProduct(product.id)" class="dropdown-item text-danger">

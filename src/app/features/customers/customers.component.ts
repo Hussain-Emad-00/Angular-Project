@@ -1,8 +1,8 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 
 import {CustomersService} from './customers.service';
-import {ModalService} from '../../core/services/modal.service';
-import {Customer} from '../../shared/models/customer.model';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {CustomerFormComponent} from './customer-form/customer-form.component';
 
 @Component({
   selector: 'app-customers',
@@ -12,13 +12,19 @@ import {Customer} from '../../shared/models/customer.model';
 })
 export class CustomersComponent implements OnInit {
   customersService = inject(CustomersService);
-  modalService = inject(ModalService);
-  selectedCustomer = signal<Customer | null>(null);
   customers = this.customersService.customers;
   loading = this.customersService.loading;
+  ngbModalService = inject(NgbModal)
 
   ngOnInit(): void {
     this.getCustomers();
+  }
+
+  openCustomerModal(customer?: any) {
+    const modalRef = this.ngbModalService.open(CustomerFormComponent)
+    if (customer) modalRef.componentInstance.customer = customer;
+
+    modalRef.result.then(result => this.onCustomerSubmitted(result), reason => reason)
   }
 
   getCustomers() {
@@ -31,28 +37,13 @@ export class CustomersComponent implements OnInit {
     }
   }
 
-  editCustomer(id: number) {
-    this.selectedCustomer.set(this.customers().find((c) => c.id == id) || null);
-    this.modalService.open('addNewCustomerModal');
-  }
-
-  addNewCustomer() {
-    this.selectedCustomer.set(null);
-    this.modalService.open('addNewCustomerModal');
-  }
-
   onCustomerSubmitted(customer: any) {
     switch (customer.action) {
       case 'update':
-        this.customersService.updateCustomer(customer).subscribe((res) => {
-          this.modalService.close('addNewCustomerModal');
-        });
+        this.customersService.updateCustomer(customer).subscribe();
         break;
       case 'add':
-        this.customersService.addNewCustomer(customer).subscribe((res) => {
-          this.modalService.close('addNewCustomerModal');
-        });
-        this.selectedCustomer.set(null);
+        this.customersService.addNewCustomer(customer).subscribe();
         break;
     }
   }

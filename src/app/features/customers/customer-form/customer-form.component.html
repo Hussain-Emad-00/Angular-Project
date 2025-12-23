@@ -1,79 +1,86 @@
-<div
-  aria-hidden="true"
-  aria-labelledby="addNewCustomerModalLabel"
-  class="modal fade"
-  data-bs-theme="dark"
-  id="addNewCustomerModal"
-  tabindex="-1"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addNewCustomerModalLabel">
-          {{ selectedCustomer() ? 'Edit Customer' : 'Add New Customer' }}
-        </h5>
-        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-      </div>
+<div class="modal-header">
+  <h5 class="modal-title">{{ customer ? 'Edit' : 'Add New' }} Customer</h5>
+  <button (click)="ngbActiveModal.dismiss()" class="btn-close" type="button"></button>
+</div>
 
-      <div class="modal-body">
-        <form (ngSubmit)="onSubmitNewCustomer()" [formGroup]="newCustomerForm">
-          <div class="mb-3">
-            <label class="form-label" for="firstName">First Name</label>
-            <input
-              [class.error]="invalidInputs().includes('firstname')"
-              class="form-control"
-              formControlName="firstName"
-              type="text"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="lastName">Last Name</label>
-            <input
-              [class.error]="invalidInputs().includes('lastname')"
-              class="form-control"
-              formControlName="lastName"
-              type="text"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="age">Age</label>
-            <input
-              [class.error]="invalidInputs().includes('age')"
-              class="form-control"
-              formControlName="age"
-              type="number"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="email">Email</label>
-            <input
-              [class.error]="invalidInputs().includes('email')"
-              class="form-control"
-              formControlName="email"
-              type="email"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="phoneNumber">Phone Number</label>
-            <input
-              [class.error]="invalidInputs().includes('phone')"
-              class="form-control"
-              formControlName="phone"
-              type="tel"
-            />
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal" type="reset">Cancel</button>
-            <button class="btn btn-success" type="submit">
-              {{ selectedCustomer() ? 'Update Customer' : 'Add Customer' }}
-            </button>
-          </div>
-        </form>
-      </div>
+<div class="modal-body">
+  <form [formGroup]="customerForm">
+    <div class="mb-3">
+      <label class="form-label" for="firstName">First Name</label>
+      <input
+        class="form-control"
+        formControlName="firstName"
+        type="text"
+      />
+      @if (customerForm.controls.firstName.dirty && customerForm.controls.firstName.errors?.['required']) {
+        <span class="text-danger">This input is required</span>
+      }
     </div>
-  </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="lastName">Last Name</label>
+      <input
+        class="form-control"
+        formControlName="lastName"
+        type="text"
+      />
+      @if (customerForm.controls.lastName.dirty && customerForm.controls.lastName.errors?.['required']) {
+        <span class="text-danger">This input is required</span>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="age">Age</label>
+      <input
+        class="form-control"
+        formControlName="age"
+        min="1"
+        type="number"
+      />
+      @if (customerForm.controls.age.dirty && customerForm.controls.age.errors?.['required']) {
+        <span class="text-danger">This input is required</span>
+      }
+      @if (customerForm.controls.age.dirty && customerForm.controls.age.errors?.['min']) {
+        <span class="text-danger">Invalid age. Please enter a value greater than 1</span>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="email">Email</label>
+      <input
+        class="form-control"
+        formControlName="email"
+        type="email"
+      />
+      @if (customerForm.controls.email.dirty && customerForm.controls.email.errors?.['required']) {
+        <span class="text-danger">This input is required</span>
+      }
+      @if (customerForm.controls.email.dirty && customerForm.controls.email.errors?.['email']) {
+        <span class="text-danger">Please enter a valid email address</span>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="phoneNumber">Phone Number</label>
+      <input
+        class="form-control"
+        formControlName="phone"
+        max="11"
+        min="11"
+        placeholder="01xxxxxxxxx"
+        type="tel"
+      />
+      @if (customerForm.controls.phone.dirty && customerForm.controls.phone.errors?.['required']) {
+        <span class="text-danger">This input is required</span>
+      }
+      @if (customerForm.controls.phone.dirty && customerForm.controls.phone.errors?.['pattern']) {
+        <span class="text-danger">Please enter a valid 11-digit Egyptian phone number starting with 01</span>
+      }
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button (click)="ngbActiveModal.dismiss()" class="btn btn-secondary" type="button">Cancel</button>
+  <button (click)="save()" class="btn btn-success" type="button">{{ customer ? 'Update' : 'Add' }} Customer</button>
 </div>

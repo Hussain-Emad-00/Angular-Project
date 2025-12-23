@@ -1,7 +1,7 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {ModalService} from '../../../core/services/modal.service';
-import {Product} from '../../../shared/models/product.model';
+import {Component, inject, OnInit} from '@angular/core';
 import {ProductsListService} from './products-list.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ProductFormComponent} from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-product-list',
@@ -11,10 +11,9 @@ import {ProductsListService} from './products-list.service';
 })
 export class ProductListComponent implements OnInit {
   productsService = inject(ProductsListService);
-  modalService = inject(ModalService);
-  selectedProduct = signal<Product | null>(null);
   products = this.productsService.products;
   loading = this.productsService.loading;
+  ngbModalService = inject(NgbModal)
 
   ngOnInit(): void {
     this.getProducts();
@@ -30,28 +29,21 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  editProduct(id: number) {
-    this.selectedProduct.set(this.products().find((p) => p.id == id) || null)
-    this.modalService.open('addNewProductModal')
-  }
+  openProductModal(productId?: number) {
+    const modalRef = this.ngbModalService.open(ProductFormComponent)
+    const product = this.products().find(p => p.id === productId);
+    if (product) modalRef.componentInstance.product = product;
 
-  addNewProduct() {
-    this.selectedProduct.set(null)
-    this.modalService.open('addNewProductModal')
+    modalRef.result.then(result => this.onProductSubmitted(result), reason => reason)
   }
 
   onProductSubmitted(product: any) {
     switch (product.action) {
       case 'update':
-        this.productsService.updateProduct(product).subscribe(res => {
-          this.modalService.close('addNewProductModal')
-        })
+        this.productsService.updateProduct(product).subscribe()
         break;
       case 'add':
-        this.productsService.addNewProduct(product).subscribe(res => {
-          this.modalService.close('addNewProductModal')
-        })
-        this.selectedProduct.set(null)
+        this.productsService.addNewProduct(product).subscribe()
         break;
     }
   }

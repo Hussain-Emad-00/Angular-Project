@@ -1,3 +1,17 @@
-.error {
+.modal-header, .modal-body, .modal-footer {
+  background-color: #212529;
+  color: #f8f9fa;
+
+  & input {
+    background-color: #212529;
+    color: #f8f9fa;
+
+    &::placeholder {
+      color: #495057;
+    }
+  }
+}
+
+input.ng-invalid.ng-dirty {
   border: 1px solid red;
 }

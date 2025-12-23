@@ -9,11 +9,12 @@ import {CustomersComponent} from './customers.component';
 import {CustomerFormComponent} from './customer-form/customer-form.component';
 import {CustomerComponent} from './customer/customer.component';
 import {CustomersRoutingModule} from './customers-routing-module';
+import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [CustomersComponent, CustomerFormComponent, CustomerComponent],
-  imports: [CommonModule, FormsModule, PaginationComponent, RouterLink, ReactiveFormsModule, CustomersRoutingModule],
-  providers: [provideHttpClient()],
+  imports: [CommonModule, FormsModule, PaginationComponent, RouterLink, ReactiveFormsModule, CustomersRoutingModule, NgbModule],
+  providers: [provideHttpClient(), NgbActiveModal],
 })
 export class CustomersModule {
 }

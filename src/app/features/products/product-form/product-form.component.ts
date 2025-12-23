@@ -1,6 +1,6 @@
-import {Component, input, OnChanges, output, signal, SimpleChanges} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Product} from '../../../shared/models/product.model';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-form',
@@ -8,55 +8,34 @@ import {Product} from '../../../shared/models/product.model';
   styleUrl: './product-form.component.scss',
   standalone: false,
 })
-export class ProductFormComponent implements OnChanges {
-  imagePreview = signal<string | null>(null);
-  newProductForm = new FormGroup({
+export class ProductFormComponent implements OnInit {
+  @Input() product: any
+  ngbActiveModal = inject(NgbActiveModal);
+  productForm = new FormGroup({
     title: new FormControl('', [Validators.required]),
     description: new FormControl('', [Validators.required]),
-    thumbnail: new FormControl('', [Validators.required]),
+    thumbnail: new FormControl(''),
     price: new FormControl(1, [Validators.required, Validators.min(1)]),
     stock: new FormControl(1, [Validators.required, Validators.min(1)]),
   });
-  invalidInputs = signal<string[]>([]);
-  selectedProduct = input<Product>();
-  submitProduct = output<any>();
+  imagePreview = '';
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!this.selectedProduct()) {
-      this.newProductForm.reset();
-      return;
-    }
-    if (changes['selectedProduct'] && this.selectedProduct()) {
-      this.newProductForm.patchValue({
-        title: this.selectedProduct()?.title,
-        description: this.selectedProduct()?.description,
-        price: this.selectedProduct()?.price,
-        stock: this.selectedProduct()?.stock,
-        thumbnail: this.selectedProduct()?.images[0],
-      });
-      this.imagePreview.set(this.selectedProduct()?.images[0] || null);
+  ngOnInit() {
+    if (this.product) {
+      this.productForm.patchValue(this.product)
+      this.imagePreview = (this.product.thumbnail);
     }
   }
 
-  onSubmitNewProduct() {
-    if (this.newProductForm.valid) {
-      this.submitProduct.emit({
-        ...this.newProductForm.value,
-        id: this.selectedProduct()?.id,
-        action: this.selectedProduct() ? 'update' : 'add',
-      });
-      this.newProductForm.reset();
-      this.imagePreview.set(null);
-    } else {
-      this.invalidInputs.set([]);
-      let controls = this.newProductForm.controls;
-      for (const key in controls) {
-        const control = controls[key as keyof typeof controls];
-        if (control.invalid) {
-          this.invalidInputs.update((old) => [...old, key]);
-        }
-      }
-    }
+  save() {
+    if (this.productForm.valid) {
+      this.productForm.controls.thumbnail.patchValue(this.imagePreview)
+      this.ngbActiveModal.close(
+        this.product
+          ? {...this.productForm.value, action: 'update', id: this.product.id}
+          : {...this.productForm.value, action: 'add'}
+      )
+    } else this.productForm.markAllAsDirty()
   }
 
   onFileSelected(event: Event) {
@@ -64,15 +43,25 @@ export class ProductFormComponent implements OnChanges {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
-
     const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
 
-      this.newProductForm.patchValue({thumbnail: base64});
-      this.newProductForm.get('thumbnail')?.updateValueAndValidity();
+    reader.onload = (event) => {
+      const image = new Image();
+      image.src = event.target?.result as string;
 
-      this.imagePreview.set(base64);
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        ctx?.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.1);
+
+        this.imagePreview = (compressedDataUrl);
+      }
     };
     reader.readAsDataURL(file);
   }
