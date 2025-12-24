@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {AdminLayout} from './layout/admin-layout/admin-layout';
 import {UserLayout} from './layout/user-layout/user-layout';
 import {RouterLink, RouterOutlet} from '@angular/router';
@@ -9,6 +9,7 @@ import {SidebarComponent} from './layout/sidebar/sidebar.component';
 import {UserInfoComponent} from '../shared/components/user-info/user-info.component';
 import {AuthModule} from '@auth0/auth0-angular';
 import {environment} from '../../environments/environment';
+import {authInterceptor} from './interceptors/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,7 @@ import {environment} from '../../environments/environment';
       useRefreshTokens: true,
     })
   ],
-  providers: [provideHttpClient()],
+  providers: [provideHttpClient(withInterceptors([authInterceptor]))],
   exports: [
     AdminLayout,
     UserLayout

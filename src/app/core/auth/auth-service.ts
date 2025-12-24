@@ -27,6 +27,10 @@ export class AuthService {
     return this.auth0.user$;
   }
 
+  getToken$() {
+    return this.auth0.getAccessTokenSilently()
+  }
+
   isAuthenticated$() {
     return this.auth0.isAuthenticated$
   }
