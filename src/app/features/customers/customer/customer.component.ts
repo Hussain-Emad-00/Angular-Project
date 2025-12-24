@@ -1,7 +1,7 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, inject, Input, OnInit} from '@angular/core';
 
 import {CustomerService} from './customer.service';
+import {Customer as CustomerModel} from '../../../shared/models/customer.model';
 
 @Component({
   selector: 'app-customer',
@@ -10,12 +10,14 @@ import {CustomerService} from './customer.service';
 })
 export class CustomerComponent implements OnInit {
   detailsService = inject(CustomerService);
-  customer = this.detailsService.customer;
-  loading = this.detailsService.loading;
-  private route = inject(ActivatedRoute);
-  id = signal(this.route.snapshot.paramMap.get('id') || '');
+  @Input({required: true}) id!: string;
+  isLoading = true;
+  customer: CustomerModel | undefined
 
   ngOnInit() {
-    this.detailsService.getCustomer(this.id()).subscribe();
+    this.detailsService.getCustomer(this.id).subscribe((res: any) => {
+      this.isLoading = false
+      this.customer = res
+    });
   }
 }

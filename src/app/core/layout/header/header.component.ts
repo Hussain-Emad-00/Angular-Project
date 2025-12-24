@@ -1,6 +1,6 @@
 import {Component, inject, output} from '@angular/core';
 import {Router} from '@angular/router';
-import {CartService} from '../../services/cart.service';
+import {CartService} from '../../../features/cart/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -14,12 +14,8 @@ export class HeaderComponent {
   private cartService = inject(CartService);
   cartCount = this.cartService.count;
 
-  isPathIncludesAdmin() {
-    return this.router.url.includes('admin');
-  }
-
-  isPathIncludesCart() {
-    return this.router.url.includes('cart');
+  isPathIncludes(text: string) {
+    return this.router.url.includes(text);
   }
 
   onToggleSidebar() {

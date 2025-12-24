@@ -7,7 +7,7 @@
       Add New Product
     </button>
   </header>
-  @if (loading()) {
+  @if (isLoading) {
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-border text-light" role="status"></div>
     </div>
@@ -63,7 +63,7 @@
       <app-pagination
         (currentPageOutput)="currentPage($event)"
         (pageSizeOutput)="pageSize($event)"
-        [totalItems]="productsService.productsCount()"/>
+        [totalItems]="productsCount"/>
     </section>
   }
 </section>

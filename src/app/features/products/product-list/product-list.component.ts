@@ -1,7 +1,8 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {ProductsListService} from './products-list.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductFormComponent} from '../product-form/product-form.component';
+import {Product} from '../../../shared/models/product.model';
 
 @Component({
   selector: 'app-product-list',
@@ -11,21 +12,30 @@ import {ProductFormComponent} from '../product-form/product-form.component';
 })
 export class ProductListComponent implements OnInit {
   productsService = inject(ProductsListService);
-  products = this.productsService.products;
-  loading = this.productsService.loading;
   ngbModalService = inject(NgbModal)
+  products = signal<Product[]>([])
+  productsCount = 0
+  isLoading = true;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getProducts();
   }
 
   getProducts() {
-    this.productsService.loadProducts().subscribe();
+    this.productsService.loadProducts().subscribe((res: any) => {
+      if (this.productsCount <= 0) this.productsCount = res.total
+
+      this.products.set(res.products)
+      this.isLoading = false
+    });
   }
 
   deleteProduct(id: number) {
     if (confirm("Are you sure you want to delete this product?")) {
-      this.productsService.deleteProduct(id).subscribe()
+      this.productsService.deleteProduct(id).subscribe((res: any) => {
+        this.products.update((products) =>
+          products.filter((product) => product.id !== id));
+      })
     }
   }
 
@@ -40,10 +50,16 @@ export class ProductListComponent implements OnInit {
   onProductSubmitted(product: any) {
     switch (product.action) {
       case 'update':
-        this.productsService.updateProduct(product).subscribe()
+        this.productsService.updateProduct(product).subscribe((res: any) => {
+          this.products.update((products) =>
+            products.map((p) => p.id === res.id ? res : p)
+          )
+        })
         break;
       case 'add':
-        this.productsService.addNewProduct(product).subscribe()
+        this.productsService.addNewProduct(product).subscribe((res: any) => {
+          this.products.update((products) => [res, ...products])
+        })
         break;
     }
   }

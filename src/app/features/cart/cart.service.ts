@@ -1,6 +1,6 @@
 import {computed, Injectable} from '@angular/core';
 
-import {db} from './db.service';
+import {db} from '../../core/services/db.service';
 import {CartItem} from '../../shared/models/cart.model';
 import {liveQuery} from 'dexie';
 import {toSignal} from '@angular/core/rxjs-interop';

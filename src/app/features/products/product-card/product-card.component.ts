@@ -1,16 +1,6 @@
-import {
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  ElementRef,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  viewChild
-} from '@angular/core';
-import {CartService} from '../../../core/services/cart.service';
-import {ProductsService} from '../products.service';
+import {AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CartService} from '../../cart/cart.service';
+import {ProductCardService} from './product-card.service';
 import {ToastService} from '../../../shared/components/toast/toast.service';
 
 @Component({
@@ -19,30 +9,22 @@ import {ToastService} from '../../../shared/components/toast/toast.service';
   styleUrl: './product-card.component.scss',
   standalone: false,
 })
-export class ProductCardComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class ProductCardComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('loadMoreTrigger') trigger!: ElementRef;
   cartService = inject(CartService);
-  productsService = inject(ProductsService);
+  productsService = inject(ProductCardService);
   toastService = inject(ToastService);
-  trigger = viewChild<ElementRef>('loadMoreTrigger');
-  isAdmin = signal(false);
-  cartCount = signal(this.cartService.count());
-  products = this.productsService.products;
+  products = this.productsService.products.asReadonly();
 
   ngOnInit() {
-    this.productsService.getProductCount().subscribe();
-    this.productsService.getProducts().subscribe(() => setTimeout(() => this.checkIfNeedsMoreProducts(), 100));
-    this.productsService.isAdmin().subscribe((isAdmin) => this.isAdmin.set(isAdmin));
+    this.productsService.getProducts().subscribe(() => setTimeout(() => this.checkIfNeedsMoreProducts(), 200));
   }
 
   ngAfterViewInit() {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) this.productsService.loadMoreProducts();
     }, {rootMargin: '0px 0px 40% 0px'});
-    observer.observe(this.trigger()?.nativeElement);
-  }
-
-  ngAfterViewChecked() {
-    this.cartCount.set(this.cartService.count());
+    observer.observe(this.trigger.nativeElement);
   }
 
   addToCart(product: any) {
@@ -56,15 +38,13 @@ export class ProductCardComponent implements OnInit, AfterViewInit, AfterViewChe
     };
 
     this.cartService.addToCart(item).then((added) => {
-      if (added) {
-        this.cartCount.set(this.cartService.count());
-        this.toastService.add('Successfully Added To Cart', 'text-bg-success')
-      } else this.toastService.add('No Stock', 'text-bg-danger')
+      if (added) this.toastService.add('Successfully Added To Cart', 'text-bg-success')
+      else this.toastService.add('No Stock', 'text-bg-danger')
     });
   }
 
   checkIfNeedsMoreProducts() {
-    let triggerTop = (this.trigger()?.nativeElement.getBoundingClientRect().top * 40) / 100
+    let triggerTop = (this.trigger.nativeElement.getBoundingClientRect().top * 40) / 100
     if (triggerTop < window.innerHeight) this.productsService.loadMoreProducts();
   }
 

@@ -1,30 +1,18 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, EMPTY, tap } from 'rxjs';
-import { Customer } from '../../shared/models/customer.model';
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {catchError, EMPTY} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CustomersService {
-  size = signal(50);
-  skipped = signal(0);
-  customersCount = signal(0);
-  customers = signal<Customer[]>([]);
-  loading = signal(true);
+  size = 50;
+  skipped = 0;
   private baseUrl = 'https://dummyjson.com/users';
   private http = inject(HttpClient);
 
-  constructor() {
-    this.getCustomersCount();
-  }
-
   loadCustomers() {
-    return this.http.get(`${this.baseUrl}?limit=${this.size()}&skip=${this.skipped()}`).pipe(
-      tap((res: any) => {
-        this.customers.set(res.users);
-        this.loading.set(false);
-      }),
+    return this.http.get(`${this.baseUrl}?limit=${this.size}&skip=${this.skipped}`).pipe(
       catchError((error) => {
         console.error('Get customers failed', error);
         return EMPTY;
@@ -34,52 +22,37 @@ export class CustomersService {
 
   deleteCustomer(id: number) {
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      tap((res: any) => {
-        this.customers.update((customers) => customers.filter((customer) => customer.id !== id));
-      }),
       catchError((error) => {
-        console.error('Get customers failed', error);
+        console.error('Delete customer failed', error);
         return EMPTY;
       })
     );
   }
 
-  addNewCustomer({ action, id, ...customer }: any) {
+  addNewCustomer({action, id, ...customer}: any) {
     return this.http.post(`${this.baseUrl}/add`, customer).pipe(
-      tap((res: any) => {
-        this.customers.update((customers) => [res, ...customers]);
-      }),
       catchError((error) => {
-        console.error('Get customers failed', error);
+        console.error('Add customer failed', error);
         return EMPTY;
       })
     );
   }
 
-  updateCustomer({ action, id, ...customer }: any) {
+  updateCustomer({action, id, ...customer}: any) {
     return this.http.put(`${this.baseUrl}/${id}`, customer).pipe(
-      tap((res: any) => {
-        this.customers.update((customers) => customers.map((c) => (c.id === res.id ? res : c)));
-      }),
       catchError((error) => {
-        console.error('Get customers failed', error);
+        console.error('Update customer failed', error);
         return EMPTY;
       })
     );
-  }
-
-  getCustomersCount() {
-    this.http.get(`${this.baseUrl}`).subscribe((res: any) => {
-      this.customersCount.set(res.total);
-    });
   }
 
   currentPage(page: number) {
-    this.skipped.set(page * this.size() - this.size());
+    this.skipped = (page * this.size) - this.size;
   }
 
   pageSize(size: number) {
-    this.skipped.set(0);
-    this.size.set(size);
+    this.skipped = 0;
+    this.size = size;
   }
 }

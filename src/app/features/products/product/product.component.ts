@@ -1,9 +1,11 @@
-import {Component, inject, input, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, Input, OnInit, signal} from '@angular/core';
 import {Location} from '@angular/common';
 
 import {ProductService} from './product.service';
 import {Router} from '@angular/router';
 import {ToastService} from '../../../shared/components/toast/toast.service';
+import {Product as ProductModel} from '../../../shared/models/product.model';
+import {CartService} from '../../cart/cart.service';
 
 @Component({
   selector: 'app-product',
@@ -11,41 +13,48 @@ import {ToastService} from '../../../shared/components/toast/toast.service';
   styleUrl: './product.component.scss',
   standalone: false,
 })
-export class ProductComponent implements OnInit, OnDestroy {
-  id = input.required<string>();
+export class ProductComponent implements OnInit {
+  @Input({required: true}) id!: string;
   location = inject(Location);
   router = inject(Router);
   toastService = inject(ToastService);
   productService = inject(ProductService);
-  product = this.productService.product;
-  quantity = this.productService.quantity;
+  cartService = inject(CartService);
+  quantity = 1;
+  product = signal<ProductModel | null>(null);
 
   ngOnInit() {
-    this.productService.getProduct(+this.id()).subscribe();
-  }
-
-  ngOnDestroy() {
-    this.productService.product.set(null);
-    this.productService.quantity.set(1);
+    this.productService.getProduct(+this.id).subscribe((product: any) => {
+      this.product.set(product)
+    });
   }
 
   changeImage(img: string) {
-    this.productService.changeImage(img);
+    this.product.update((p) => ({...p!, thumbnail: img}));
   }
 
   addToCart() {
-    this.productService.addToCart().then((added) => {
+    const product = {
+      id: this.product()?.id,
+      thumbnail: this.product()?.thumbnail,
+      title: this.product()?.title,
+      price: this.product()?.price,
+      quantity: this.quantity,
+      stock: this.product()?.stock,
+    };
+
+    this.cartService.addToCart(product).then((added) => {
       if (added) this.toastService.add('Successfully Added To Cart', 'text-bg-success')
       else this.toastService.add('No Stock', 'text-bg-danger')
     });
   }
 
   incrementQuantity() {
-    this.quantity.update((q) => (q >= this.product()!.stock ? q : q + 1));
+    this.quantity = this.quantity >= this.product()!.stock ? this.quantity : this.quantity + 1;
   }
 
   decrementQuantity() {
-    this.quantity.update((q) => (q <= 1 ? q : q - 1));
+    this.quantity = this.quantity <= 1 ? this.quantity : this.quantity - 1;
   }
 
   isPathIncludesAdmin() {

@@ -4,13 +4,13 @@
     id="infoDropdown"
     ngbDropdownToggle>
     <img
-      [alt]="user().name"
-      [src]="user().photoUrl"
+      [alt]="user.name"
+      [src]="user.photoUrl"
       class="rounded-circle me-2"
       height="40"
       width="40"
     />
-    <span>{{ user().name }}</span>
+    <span>{{ user.name }}</span>
   </button>
   <div aria-labelledby="infoDropdown" class="dropdown-menu-dark dropdown-menu-end" ngbDropdownMenu>
     <button (click)="logout()" class="dropdown-item" ngbDropdownItem>Logout</button>
