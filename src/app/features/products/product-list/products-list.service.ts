@@ -8,6 +8,7 @@ import {catchError, EMPTY} from 'rxjs';
 })
 export class ProductsListService {
   size = 50;
+  page = 1;
   skipped = 0;
   private http = inject(HttpClient)
   private baseUrl = 'https://dummyjson.com/products';
@@ -17,16 +18,6 @@ export class ProductsListService {
       .pipe(
         catchError(error => {
           console.error('Get Products failed', error);
-          return EMPTY;
-        })
-      )
-  }
-
-  deleteProduct(id: number) {
-    return this.http.delete(`${this.baseUrl}/${id}`)
-      .pipe(
-        catchError(error => {
-          console.error('Delete Product failed', error);
           return EMPTY;
         })
       )
@@ -52,12 +43,22 @@ export class ProductsListService {
       )
   }
 
-  currentPage(page: number) {
-    this.skipped = ((page * this.size)) - this.size
+  deleteProduct(id: number) {
+    return this.http.delete(`${this.baseUrl}/${id}`)
+      .pipe(
+        catchError(error => {
+          console.error('Delete Product failed', error);
+          return EMPTY;
+        })
+      )
   }
 
-  pageSize(size: number) {
-    this.skipped = 0
-    this.size = size;
+  onPaginationChange(data: any) {
+    if (data.size) {
+      this.size = +data.size
+      this.page = 1
+    }
+    if (data.page) this.page = +data.page;
+    this.skipped = (this.page * this.size) - this.size;
   }
 }

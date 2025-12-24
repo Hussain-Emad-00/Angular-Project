@@ -7,6 +7,7 @@ import {catchError, EMPTY} from 'rxjs';
 })
 export class CustomersService {
   size = 50;
+  page = 1;
   skipped = 0;
   private baseUrl = 'https://dummyjson.com/users';
   private http = inject(HttpClient);
@@ -15,15 +16,6 @@ export class CustomersService {
     return this.http.get(`${this.baseUrl}?limit=${this.size}&skip=${this.skipped}`).pipe(
       catchError((error) => {
         console.error('Get customers failed', error);
-        return EMPTY;
-      })
-    );
-  }
-
-  deleteCustomer(id: number) {
-    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      catchError((error) => {
-        console.error('Delete customer failed', error);
         return EMPTY;
       })
     );
@@ -47,12 +39,21 @@ export class CustomersService {
     );
   }
 
-  currentPage(page: number) {
-    this.skipped = (page * this.size) - this.size;
+  deleteCustomer(id: number) {
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      catchError((error) => {
+        console.error('Delete customer failed', error);
+        return EMPTY;
+      })
+    );
   }
 
-  pageSize(size: number) {
-    this.skipped = 0;
-    this.size = size;
+  onPaginationChange(data: any) {
+    if (data.size) {
+      this.size = +data.size
+      this.page = 1
+    }
+    if (data.page) this.page = +data.page;
+    this.skipped = (this.page * this.size) - this.size;
   }
 }

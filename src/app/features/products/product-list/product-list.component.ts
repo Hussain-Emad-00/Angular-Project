@@ -64,13 +64,8 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  currentPage(page: number) {
-    this.productsService.currentPage(page)
-    this.getProducts()
-  }
-
-  pageSize(size: number) {
-    this.productsService.pageSize(size)
-    this.getProducts()
+  onPaginationChange(data: any) {
+    this.productsService.onPaginationChange(data)
+    this.getProducts();
   }
 }

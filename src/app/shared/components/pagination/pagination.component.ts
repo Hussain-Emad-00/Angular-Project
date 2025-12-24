@@ -1,44 +1,35 @@
-import { Component, input, OnInit, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {Component, Input, output} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {NgbPagination, NgbPaginationPages} from '@ng-bootstrap/ng-bootstrap';
+
+const FILTER_PAG_REGEX = /[^0-9]/g;
 
 @Component({
   selector: 'app-pagination',
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
-  imports: [FormsModule],
+  imports: [FormsModule, NgbPagination, NgbPaginationPages],
 })
-export class PaginationComponent implements OnInit {
-  pageSize = signal(50);
-  currentPage = signal(1);
-  currentPageInput = signal(1);
-  totalPages = signal(0);
+export class PaginationComponent {
+  @Input({required: true}) totalItems!: number;
+  pagination = output<{ page?: number, size?: number }>()
+  pageSize = 50;
+  page = 1;
 
-  totalItems = input(0);
-  pageSizeOutput = output<number>();
-  currentPageOutput = output<number>();
-
-  ngOnInit() {
-    this.loadData();
+  selectPage(page: string) {
+    this.page = parseInt(page, 10) || 1;
   }
 
-  onPageSizeChange() {
-    this.currentPage.set(1);
-    this.currentPageInput.set(1);
-    this.pageSizeOutput.emit(this.pageSize());
-    this.loadData();
+  formatInput(input: HTMLInputElement) {
+    input.value = input.value.replace(FILTER_PAG_REGEX, '');
   }
 
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages()) return;
-
-    this.currentPage.set(page);
-    this.currentPageInput.set(page);
-    this.currentPageOutput.emit(this.currentPage());
+  onPageChange(page: number) {
+    this.pagination.emit({page});
   }
 
-  loadData() {
-    this.totalPages.set(Math.ceil(this.totalItems() / this.pageSize()));
-
-    this.currentPageInput.set(this.currentPage());
+  onSizeChange() {
+    this.page = 1
+    this.pagination.emit({size: this.pageSize});
   }
 }

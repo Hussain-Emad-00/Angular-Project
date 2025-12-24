@@ -63,13 +63,8 @@ export class CustomersComponent implements OnInit {
     }
   }
 
-  currentPage(page: number) {
-    this.customersService.currentPage(page);
-    this.getCustomers();
-  }
-
-  pageSize(size: number) {
-    this.customersService.pageSize(size);
+  onPaginationChange(data: any) {
+    this.customersService.onPaginationChange(data)
     this.getCustomers();
   }
 }

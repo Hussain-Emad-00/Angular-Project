@@ -1,61 +1,47 @@
 <section
-  class="d-flex bg-dark p-3 flex-md-row flex-column justify-content-between align-items-center mt-3"
->
+  class="d-flex bg-dark p-3 flex-md-row flex-column justify-content-between align-items-center mt-3">
+
   <div class="d-flex align-items-center mb-md-0 mb-3">
     <label class="me-2">Size:</label>
     <select
-      (change)="onPageSizeChange()"
+      (change)="onSizeChange()"
       [(ngModel)]="pageSize"
-      class="form-select page-size-select"
-    >
+      class="form-select page-size-select">
       <option [value]="50">50</option>
       <option [value]="100">100</option>
       <option [value]="200">200</option>
     </select>
   </div>
 
-  <section class="d-flex align-items-center gap-2">
-    <button
-      (click)="goToPage(1)"
-      [disabled]="currentPage() === 1"
-      class="btn btn-outline-light btn-sm"
-    >
-      «
-    </button>
-    <button
-      (click)="goToPage(currentPage() - 1)"
-      [disabled]="currentPage() === 1"
-      class="btn btn-outline-light btn-sm"
-    >
-      ‹
-    </button>
-
-    <section class="d-flex align-items-center">
-      <span class="me-2">Page</span>
-      <input
-        (keyup.enter)="goToPage(currentPageInput())"
-        [(ngModel)]="currentPageInput"
-        [max]="totalPages()"
-        class="form-control page-input"
-        min="1"
-        type="number"
-      />
-      <span class="ms-2">/ {{ totalPages() }}</span>
-    </section>
-
-    <button
-      (click)="goToPage(currentPage() + 1)"
-      [disabled]="currentPage() === totalPages()"
-      class="btn btn-outline-light btn-sm"
-    >
-      ›
-    </button>
-    <button
-      (click)="goToPage(totalPages())"
-      [disabled]="currentPage() === totalPages()"
-      class="btn btn-outline-light btn-sm"
-    >
-      »
-    </button>
-  </section>
+  <ngb-pagination
+    (pageChange)="onPageChange($event)"
+    [(page)]="page"
+    [boundaryLinks]="true"
+    [collectionSize]="totalItems"
+    [pageSize]="pageSize">
+    <ng-template class="m-0" let-page let-pages="pages" ngbPaginationPages>
+      @if (pages.length > 0) {
+        <li class="ngb-custom-pages-item">
+          <div class="d-flex flex-nowrap px-2">
+            <label class="col-form-label me-2 ms-1" for="paginationInput" id="paginationInputLabel">Page</label>
+            <input
+              #i
+              (blur)="selectPage(i.value)"
+              (input)="formatInput($any($event).target)"
+              (keyup.enter)="onPageChange(+i.value)"
+              [value]="page"
+              aria-labelledby="paginationInputLabel paginationDescription"
+              class="form-control"
+              id="paginationInput"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              style="width: 2.5rem"
+              type="text"
+            />
+            <span class="col-form-label text-nowrap px-2" id="paginationDescription"> of {{ pages.length }}</span>
+          </div>
+        </li>
+      }
+    </ng-template>
+  </ngb-pagination>
 </section>
