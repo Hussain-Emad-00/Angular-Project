@@ -2,6 +2,8 @@ import {Component, inject, Input, OnInit} from '@angular/core';
 
 import {CustomerService} from './customer.service';
 import {Customer as CustomerModel} from '../../../shared/models/customer.model';
+import {CustomerFormComponent} from '../customer-form/customer-form.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-customer',
@@ -10,6 +12,7 @@ import {Customer as CustomerModel} from '../../../shared/models/customer.model';
 })
 export class CustomerComponent implements OnInit {
   detailsService = inject(CustomerService);
+  ngbModalService = inject(NgbModal)
   @Input({required: true}) id!: string;
   isLoading = true;
   customer: CustomerModel | undefined
@@ -19,5 +22,12 @@ export class CustomerComponent implements OnInit {
       this.isLoading = false
       this.customer = res
     });
+  }
+
+  openCustomerModal() {
+    const modalRef = this.ngbModalService.open(CustomerFormComponent)
+    modalRef.componentInstance.customer = this.customer;
+
+    modalRef.result.then(({action, ...result}: any) => this.customer = result, reason => reason)
   }
 }
