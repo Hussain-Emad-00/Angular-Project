@@ -1,4 +1,4 @@
-@if (isLoading) {
+@if (isLoading()) {
   <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="spinner-border text-light" role="status"></div>
   </div>
@@ -13,33 +13,33 @@
         <article class="row mb-3">
           <div class="col-md-6">
             <h3 class="h6 text-light">User ID</h3>
-            <p class="fw-semibold">{{ customer!.id }}</p>
+            <p class="fw-semibold">{{ customer()!.id }}</p>
           </div>
           <div class="col-md-6">
             <h3 class="h6 text-light">Age</h3>
-            <p class="fw-semibold">{{ customer!.age }}</p>
+            <p class="fw-semibold">{{ customer()!.age }}</p>
           </div>
         </article>
 
         <article class="row mb-3">
           <div class="col-md-6">
             <h3 class="h6 text-light">First Name</h3>
-            <p class="fw-semibold">{{ customer!.firstName }}</p>
+            <p class="fw-semibold">{{ customer()!.firstName }}</p>
           </div>
           <div class="col-md-6">
             <h3 class="h6 text-light">Last Name</h3>
-            <p class="fw-semibold">{{ customer!.lastName }}</p>
+            <p class="fw-semibold">{{ customer()!.lastName }}</p>
           </div>
         </article>
 
         <article class="row mb-3">
           <div class="col-md-6">
             <h3 class="h6 text-light">Email</h3>
-            <p class="fw-semibold">{{ customer!.email }}</p>
+            <p class="fw-semibold">{{ customer()!.email }}</p>
           </div>
           <div class="col-md-6">
             <h3 class="h6 text-light">Phone Number</h3>
-            <p class="fw-semibold">{{ customer!.phone }}</p>
+            <p class="fw-semibold">{{ customer()!.phone }}</p>
           </div>
         </article>
       </div>

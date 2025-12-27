@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 
 import {CustomersService} from './customers.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -11,15 +11,19 @@ import {Customer} from '../../shared/models/customer.model';
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.scss',
 })
-export class CustomersComponent implements OnInit {
+export class CustomersComponent implements OnInit, OnDestroy {
   customersService = inject(CustomersService);
   ngbModalService = inject(NgbModal)
   customers = signal<Customer[]>([]);
   customersCount = 0;
-  isLoading = true
+  isLoading = signal(true)
 
   ngOnInit() {
     this.getCustomers();
+  }
+
+  ngOnDestroy() {
+    this.customersService.reset()
   }
 
   openCustomerModal(customer?: any) {
@@ -34,7 +38,7 @@ export class CustomersComponent implements OnInit {
       if (this.customersCount <= 0) this.customersCount = res.total
 
       this.customers.set(res.users)
-      this.isLoading = false
+      this.isLoading.set(false)
     });
   }
 

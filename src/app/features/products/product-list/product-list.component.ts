@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {ProductsListService} from './products-list.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductFormComponent} from '../product-form/product-form.component';
@@ -10,15 +10,19 @@ import {Product} from '../../../shared/models/product.model';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   productsService = inject(ProductsListService);
   ngbModalService = inject(NgbModal)
   products = signal<Product[]>([])
   productsCount = 0
-  isLoading = true;
+  isLoading = signal(true);
 
   ngOnInit() {
     this.getProducts();
+  }
+
+  ngOnDestroy() {
+    this.productsService.reset();
   }
 
   getProducts() {
@@ -26,7 +30,7 @@ export class ProductListComponent implements OnInit {
       if (this.productsCount <= 0) this.productsCount = res.total
 
       this.products.set(res.products)
-      this.isLoading = false
+      this.isLoading.set(false)
     });
   }
 

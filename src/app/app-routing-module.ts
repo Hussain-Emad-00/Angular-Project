@@ -1,7 +1,5 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-
-import {NotfoundComponent} from './shared/components/notfound/notfound.component';
 import {UserLayout} from './core/layout/user-layout/user-layout';
 import {AdminLayout} from './core/layout/admin-layout/admin-layout';
 import {AdminGuard} from './core/guards/admin-guard';
@@ -31,6 +29,7 @@ const routes: Routes = [
     path: 'admin',
     component: AdminLayout,
     children: [
+      {path: '', redirectTo: 'customers', pathMatch: 'full'},
       {
         path: 'products',
         loadChildren: () => import('./features/products/products-module').then(m => m.ProductsModule)
@@ -48,7 +47,11 @@ const routes: Routes = [
     loadComponent: () => import('./core/auth/auth.component').then(c => c.AuthComponent),
     canActivate: [GuestGuard],
   },
-  {path: 'not-found', title: 'Not Found', component: NotfoundComponent},
+  {
+    path: 'not-found',
+    title: 'Not Found',
+    loadComponent: () => import('./shared/components/notfound/notfound.component').then(c => c.NotfoundComponent)
+  },
   {path: '**', redirectTo: 'not-found', pathMatch: 'full'},
 ];
 

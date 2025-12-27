@@ -56,4 +56,10 @@ export class CustomersService {
     if (data.page) this.page = +data.page;
     this.skipped = (this.page * this.size) - this.size;
   }
+
+  reset() {
+    this.size = 50;
+    this.page = 1;
+    this.skipped = 0;
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {catchError, EMPTY, tap} from 'rxjs';
 import {AuthService} from '../../../core/auth/auth-service';
 import {NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle} from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ type User = { name: string | undefined; photoUrl: string | undefined };
   imports: [NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle, NgbDropdown]
 })
 export class UserInfoComponent implements OnInit {
-  user: User = {name: '', photoUrl: ''};
+  user = signal<User>({name: '', photoUrl: ''});
   protected authService = inject(AuthService);
 
   ngOnInit() {
@@ -19,7 +19,7 @@ export class UserInfoComponent implements OnInit {
       .getUser$()
       .pipe(
         tap((user) => {
-          if (user) this.user = {name: user.name, photoUrl: user.picture};
+          if (user) this.user.set({name: user.name, photoUrl: user.picture})
         }),
         catchError((error) => {
           console.error('Get User Info Failed', error);

@@ -1,4 +1,4 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, inject, Input, OnInit, signal} from '@angular/core';
 
 import {CustomerService} from './customer.service';
 import {Customer as CustomerModel} from '../../../shared/models/customer.model';
@@ -14,20 +14,20 @@ export class CustomerComponent implements OnInit {
   detailsService = inject(CustomerService);
   ngbModalService = inject(NgbModal)
   @Input({required: true}) id!: string;
-  isLoading = true;
-  customer: CustomerModel | undefined
+  isLoading = signal(true);
+  customer = signal<CustomerModel | undefined>(undefined)
 
   ngOnInit() {
     this.detailsService.getCustomer(this.id).subscribe((res: any) => {
-      this.isLoading = false
-      this.customer = res
+      this.customer.set(res)
+      this.isLoading.set(false)
     });
   }
 
   openCustomerModal() {
     const modalRef = this.ngbModalService.open(CustomerFormComponent)
-    modalRef.componentInstance.customer = this.customer;
+    modalRef.componentInstance.customer = this.customer();
 
-    modalRef.result.then(({action, ...result}: any) => this.customer = result, reason => reason)
+    modalRef.result.then(({action, ...result}: any) => this.customer.set(result), reason => reason)
   }
 }

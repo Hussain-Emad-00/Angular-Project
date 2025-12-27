@@ -1,5 +1,5 @@
 <div class="toast-container position-fixed bottom-0 start-0 p-3">
-  @for (toast of toastService.toasts; track $index) {
+  @for (toast of toastService.toasts(); track $index) {
     <ngb-toast (hidden)="toastService.remove($index)" [class]="toast.classes" [delay]="2000">
       {{ toast.message }}
     </ngb-toast>
